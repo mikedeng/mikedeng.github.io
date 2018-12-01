@@ -1,0 +1,33 @@
+---
+layout: post
+title:  "flex box grow auto margin"
+date:   2018-02-20 21:09:39
+
+categories: frontend
+---
+
+## margin-right
+```scss
+    .overview {
+        display: flex;
+
+        &__stars {
+            margin-right: auto;
+        }
+    }
+```
+
+## left and right
+```css
+    .detail {
+        display : flex;
+    }
+
+    .description {
+        flex  : 0 0 60%;
+    }
+
+    .user-reviews {
+        flex: 1;
+    }
+```

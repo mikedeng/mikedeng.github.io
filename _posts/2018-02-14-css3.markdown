@@ -1,0 +1,95 @@
+---
+layout: post
+title:  "Css3 的几个特性"
+date:   2018-02-14 22:30:39
+
+categories: frontend
+---
+
+
+## 翻转相关
++ perspective         : 180rem;
++ backface-visibility : hidden;
+
+## 背景相关
++ backdrop-filter     : blur(10px);
++ box-decoration-break: clone;
++ background-image: linear-gradient($c1, $c2)
++ background-image: radial-gradient($c1, $c2)
++ background-clip     : text;
+
+## 背景 image blend
+
+```scss
+    .picture {
+        width          : 4rem;
+        height         : 25rem;
+        background-size: cover;
+        background-blend-mode: screen;
+        &--1 {
+            background-image: linear-gradient(to right bottom, $color-tertiary-light, $color-tertiary-dark), url(../img/nat-5.jpg);
+        }
+    }
+```
+
+## mask-image
+```scss
+    {
+        background-color  : var(--color-primary);
+        -webkit-mask-image: url('../img/chevron-thin-right.svg');
+        -webkit-mask-size : cover;
+    }
+```
+
+## fill image
+search__icon {
+    height: 2rem;
+    width : 2rem;
+    fill: var(--color-grey-dark-3);
+}
+
+
+
+## 选择器
++ navi__checkbox:checked + navi__background
++ navi__checkbox:checked ~ navi__background
++ li                  : not(:last-child)
+
+## 动画相关
++ animation-fill-mode : backwards
+
+
+## css variables, set as single value or line value
+```css
+    :root {
+        --color-primary      : #eb2f64;
+        --color-primary-light: #FF3366;
+        --color-primary-dark : #BA265D;
+        --line: 1px solid var(--color-grey-light-2);
+    }
+
+    .btn-inline {
+        color: var(--color-primary);
+        border-bottom: var(--line);
+    }
+```
+
+## 文本相关
++ letter-spacing
+
+```css
+  .heading{
+      letter-spacing: 1px;
+  }
+```
+
++ currentColor, change color as the current or it's parent color.
+```css
+    .btn-inline {
+        color: orangered;
+        border-bottom 1px solid currentColor;
+        &:hover {
+            color: grey;
+        }
+    }
+```

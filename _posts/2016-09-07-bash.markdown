@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "useful shells"
+date:   2016-09-07 13:29:39  
+
+categories: server
+---
+
+
+* ` grep -rl "string" /path`  查找文件夹 path 包括文本 string 的文件
+* ` npm install n -g` & `n   latest` & `npm install npm@latest -g`  安装最新的 node & npm

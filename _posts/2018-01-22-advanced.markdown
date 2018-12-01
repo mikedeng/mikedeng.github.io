@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "some more SELECTORS"
+date:   2018-01-22 22:30:39
+
+categories: frontend
+---
+
+
+
+## advanced `attribute` selectors
+```css
+    [class^=col-] { /* start with col- */ }
+
+    [class$=col-] { /* end with col- */ }
+
+    [class*=col-] { /* contain with col- */ }
+
+```
+
+## `calc` & `not` `psudo` selector
+```scss
+    $gutter_horizontal: 80px;
+
+    .col-1-of-2 { /* grid col-1-2 */
+        width: calc(( 100% - $gutter_horizontal) / 2 );
+        &:not(:last-child) {
+            margin-right: $gutter_horizontal;
+        }
+    }
+```

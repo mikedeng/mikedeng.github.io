@@ -1,0 +1,78 @@
+---
+layout: post
+title:  "项目总结"
+date:   2018-01-31 22:30:39
+
+categories: frontend
+---
+
+## 产品遇到的问题
+
+### Unresolved
++ `animation` in `ios8`
+    > Try `css` and write your verbose vendor prefixed properties directly instead of `scss`, which can disorder the vendor prefixed properties with the standard ones.
+
+
+### Styles
+
++ Checkbox in the bottom
+    > Don't underestimate the little stuff, which can cause a lot of trouble.
+
++ Flex plugins
+    > Some new features can be used under the support of the full ecosystem.
+
++ Big numbers with style
+    > Use a big number to test and adjust the style.
+
++ Android 键盘挤压的问题
+    > parent: 100% children: rem. Make sure use absolute position in a relative sub-parent element.
+
++ 首页四张图变形
+    >  Image sizes can cause the page distortion. Check it again after the replacement.
+
++ 点击得到多个重复数据的卡片
+    > Try you best to prevent duplicate insertion. If you tries are not working, ask for the backend try solve it.
+
++ Watch out the pixels
+    > Difference screens should be correctly presented, use `rem` instead. Keep in mind that you should always use `rem` in most of the situations.
+
++ Prevent old ios (ios8) tel tracing
+    ```html
+    <meta name="format-detection" content="telephone=no"/>
+    ```
+
++ There are more values than `background-size: cover;`
+    > background-size: 60%;
+
++ Buttons can add default `border-color`
+    > Use tag `a` instead.
+
++ Old ones can be blind to use the small mobile page.
+    > Increase all of the `font-size`.
+
+
+### Data
+
++ 图片丢失
+    > Use `import` or `require` to find them.
+    > 在 Vue 的组件里绑定图片时，可能会加载不了图。例如，<img :src="imgUrl">, 如果 `imgUrl=01.png` 是通过拼接的形成的，在页面加载时可能找不到图片，这时可以先在页面开始部分加载 import image1 from `01.png`，然后再在 <img :src="image1">。这时就找得到图了
+
++ 等级
+    > Request backend to change data error.
+
+
+
+### UE
++ 全图点击
+    > Custom can be really stupid and brutal in operation of clicking. You should set all the area to be clickable. Also you should remove the href, which can skip the click operation without a sign.
+
++ Loading
+    > Add them first.
+
+
+### Others
++ 验证码卡住
+    > Backend will waste a lot of time. Write your own test cases for you own good.
+
++ Devices & numbers
+    > Devices and mobile numbers should be eligible to access their fucking system.

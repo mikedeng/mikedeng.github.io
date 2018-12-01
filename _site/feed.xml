@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>迈克.顿的技术博客</title>
+    <description>使用 jekyll
+</description>
+    <link>http://mikedeng.github.io/</link>
+    <atom:link href="http://mikedeng.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 14 Oct 2016 17:32:55 +0800</pubDate>
+    <lastBuildDate>Fri, 14 Oct 2016 17:32:55 +0800</lastBuildDate>
+    <generator>Jekyll v3.0.3</generator>
+    
+      <item>
+        <title>enum field 怎样保存nil 值</title>
+        <description>&lt;p&gt;我只是想在 &lt;code class=&quot;highlighter-rouge&quot;&gt;enum&lt;/code&gt; 字段保存一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;nil&lt;/code&gt; 值,  居然报错 &lt;strong&gt;enum is not valid industry&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Env:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Rails version = 4.0.13&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;migration&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;create_table&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:model_table&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;industry&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:integer&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;model&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ModelName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActiveRecord&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Base&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;INDUSTRY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;online_travel&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;entertainment&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;110&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;other&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;industry: &lt;/span&gt;&lt;span class=&quot;no&quot;&gt;INDUSTRY&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;执行的 action&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;　&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;create&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ModelName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;industry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;居然报错 enum is not valid industry&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;查了文档 &lt;code class=&quot;highlighter-rouge&quot;&gt;enum&lt;/code&gt; 方法, 居然没有 allow_blank: true 之类的设置.&lt;/p&gt;
+
+&lt;p&gt;官方给的best practice 是加一个 default: 0, &lt;a href=&quot;http://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html&quot;&gt;here&lt;/a&gt;.
+可是之前同事发布时, mysql执行default时间太长的引发了故障，不敢用这个。&lt;/p&gt;
+
+&lt;p&gt;意淫了一把，把 model 弄成这样：&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;solution:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;model&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ModelName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActiveRecord&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Base&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;INDUSTRY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;online_travel&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;entertainment&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;110&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;other&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;industry: &lt;/span&gt;&lt;span class=&quot;no&quot;&gt;INDUSTRY&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;设置 &lt;code class=&quot;highlighter-rouge&quot;&gt;model.industry = nil&lt;/code&gt;，竟然可以!!&lt;/p&gt;
+
+&lt;p&gt;action&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ModelName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;industry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# good&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;industry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# good&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Thu, 13 Oct 2016 02:14:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/rails/2016/10/13/how_to_set_nil_to_enum_field.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/rails/2016/10/13/how_to_set_nil_to_enum_field.html</guid>
+        
+        
+        <category>rails</category>
+        
+      </item>
+    
+      <item>
+        <title>rails migration</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+	 &lt;span class=&quot;c&quot;&gt;#退回两次 migration&lt;/span&gt;
+	rake db:rollback &lt;span class=&quot;nv&quot;&gt;STEP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;2
+
+	&lt;span class=&quot;c&quot;&gt;# 退回特定的 migration&lt;/span&gt;
+	rake db:migrate:down &lt;span class=&quot;nv&quot;&gt;VERSION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;20161010095310
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Tue, 11 Oct 2016 02:14:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/ruby/2016/10/11/rails-migration.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/ruby/2016/10/11/rails-migration.html</guid>
+        
+        
+        <category>ruby</category>
+        
+      </item>
+    
+      <item>
+        <title>use method as proc</title>
+        <description>&lt;p&gt;如何把 Ruby 方法当作 Block 使用&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+	&lt;span class=&quot;c1&quot;&gt;# sample 01&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;plus_one&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;plus_one&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;             &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; 2&lt;/span&gt;
+
+
+	&lt;span class=&quot;c1&quot;&gt;# sample 02&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;printer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:puts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;each&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; puts 1, 2, 3 one by one&lt;/span&gt;
+
+
+	&lt;span class=&quot;c1&quot;&gt;# sample 03&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;some_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logger_strategy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:puts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+	  &lt;span class=&quot;c1&quot;&gt;# do something&lt;/span&gt;
+	  &lt;span class=&quot;n&quot;&gt;logger_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;  &lt;span class=&quot;s2&quot;&gt;&quot;xxx info&quot;&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+
+	&lt;span class=&quot;c1&quot;&gt;# sample 04&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;do_some_with_rescue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;err_strategy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:raise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+	  &lt;span class=&quot;c1&quot;&gt;# raise something	  &lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;rescue&lt;/span&gt;
+	  &lt;span class=&quot;n&quot;&gt;err_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+	&lt;span class=&quot;c1&quot;&gt;# 1. directly by raise error&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;do_some_with_rescue&lt;/span&gt;
+
+	&lt;span class=&quot;c1&quot;&gt;# 2. rescue by yourself&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;error_handler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;Yahoo, I rescued it!&#39;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;do_some_with_rescue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error_handler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Thu, 15 Sep 2016 06:00:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/ruby/2016/09/15/use_method_as_proc.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/ruby/2016/09/15/use_method_as_proc.html</guid>
+        
+        
+        <category>ruby</category>
+        
+      </item>
+    
+      <item>
+        <title>useful shells</title>
+        <description>&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt; grep -rl &quot;string&quot; /path&lt;/code&gt;  查找文件夹 path 包括文本 string 的文件&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 07 Sep 2016 21:29:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/server/2016/09/07/bash.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/server/2016/09/07/bash.html</guid>
+        
+        
+        <category>server</category>
+        
+      </item>
+    
+      <item>
+        <title>configure nginx with passenger and rbenv</title>
+        <description>&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;rbenv install&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;a. git clone git://github.com/sstephenson/rbenv.git ~/.rbenv&lt;/p&gt;
+    &lt;/blockquote&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;b. echo ‘export PATH=”$HOME/.rbenv/bin:$PATH”’ » ~/.zshrc&lt;/p&gt;
+    &lt;/blockquote&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;c. echo ‘eval “$(rbenv init -)”’ » ~/.zshrc&lt;/p&gt;
+    &lt;/blockquote&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;d. exec $SHELL -l&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;rbenv-build&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;a. git clone git://github.com/sstephenson/ruby-build.git  ~/.rbenv/plugins/ruby-build&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;rbenv install 2.1.1&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;a. rbenv rehash&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;gem install passenger&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;a. rbenv rehash&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;rbenv sudo passenger-install-nginx-module&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;a. nginx home: /usr/local/nginx&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;exec &lt;code class=&quot;highlighter-rouge&quot;&gt;cat /following/content/to &amp;gt;&amp;gt; /etc/init.d/nginx&lt;/code&gt; after previous steps finished.&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;c&quot;&gt;#! /bin/sh&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;### BEGIN INIT INFO&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Provides:          nginx&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Required-Start:    $remote_fs $syslog&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Required-Stop:     $remote_fs $syslog&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Default-Start:     2 3 4 5&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Default-Stop:      0 1 6&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Short-Description: nginx init.d dash script for Ubuntu or other *nix.&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Description:       nginx init.d dash script for Ubuntu or other *nix.&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;### END INIT INFO&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# nginx - this Debian Almquist shell (dash) script, starts and stops the nginx&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#         daemon for Ubuntu and other *nix releases.&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# description:  Nginx is an HTTP(S) server, HTTP(S) reverse \&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#               proxy and IMAP/POP3 proxy server.  This \&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#               script will manage the initiation of the \&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#               server and it&#39;s process state.&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# processname: nginx&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# config:      /usr/local/nginx/conf/nginx.conf&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# pidfile:     /usr/local/nginx/logs/nginx.pid&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Provides:    nginx&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Author:  Jason Giedymin&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#          &amp;lt;jason.giedymin AT gmail.com&amp;gt;.&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Version: 3.9.0 12-MAY-2015 jason.giedymin AT gmail.com&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Notes: nginx init.d dash script for Ubuntu.&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Tested with: Ubuntu 14.10, nginx-1.7.9&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# This script&#39;s project home is:&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#   http://github.com/JasonGiedymin/nginx-init-ubuntu&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#     &lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#                               Functions&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;LSB_FUNC&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/lib/lsb/init-functions
+
+  &lt;span class=&quot;c&quot;&gt;# Test that init functions exists&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; -r &lt;span class=&quot;nv&quot;&gt;$LSB_FUNC&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: Cannot find &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$LSB_FUNC&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;! Script exiting.&quot;&lt;/span&gt; 1&amp;gt;&amp;amp;2
+      &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;5
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  . &lt;span class=&quot;nv&quot;&gt;$LSB_FUNC&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#                               Consts&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Include nginx defaults if available&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -f /etc/default/nginx &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+      . /etc/default/nginx
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;# Minimize path&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+  &lt;span class=&quot;nv&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;nginx&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;                             &lt;span class=&quot;c&quot;&gt;# process name&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;DESCRIPTION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;DESCRIPTION&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Nginx Server...&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# process description&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;NGINXPATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;NGINXPATH&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/usr/local/nginx&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;# root path where installed&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;DAEMON&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;DAEMON&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$NGINXPATH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/sbin/nginx&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;       &lt;span class=&quot;c&quot;&gt;# path to daemon binary&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;NGINX_CONF_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;NGINX_CONF_FILE&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$NGINXPATH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/conf/nginx.conf&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# config file path&lt;/span&gt;
+
+  &lt;span class=&quot;nv&quot;&gt;PIDNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PIDNAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;nginx&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;                   &lt;span class=&quot;c&quot;&gt;# lets you do $PS-slave&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;PIDFILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PIDFILE&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PIDNAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.pid&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;              &lt;span class=&quot;c&quot;&gt;# pid file&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;PIDSPATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PIDSPATH&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$NGINXPATH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# default pid location, you should change it&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;RUNAS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;RUNAS&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:-&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;                          &lt;span class=&quot;c&quot;&gt;# user to run as&lt;/span&gt;
+
+  &lt;span class=&quot;nv&quot;&gt;SCRIPT_OK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0           &lt;span class=&quot;c&quot;&gt;# ala error codes&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;SCRIPT_ERROR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1        &lt;span class=&quot;c&quot;&gt;# ala error codes&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1                &lt;span class=&quot;c&quot;&gt;# boolean&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0               &lt;span class=&quot;c&quot;&gt;# boolean&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#                               Simple Tests&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;# Test if nginx is a file and executable&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; -x &lt;span class=&quot;nv&quot;&gt;$DAEMON&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: You don&#39;t have permissions to execute nginx.&quot;&lt;/span&gt; 1&amp;gt;&amp;amp;2
+      &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;4
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;# You can also set your conditions like so:&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# set exit condition&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# set -e&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#                               Functions&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;#------------------------------------------------------------------------------&lt;/span&gt;
+
+  setFilePerms&lt;span class=&quot;o&quot;&gt;(){&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -f &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;chmod 400 &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  configtest&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nv&quot;&gt;$DAEMON&lt;/span&gt; -t -c &lt;span class=&quot;nv&quot;&gt;$NGINX_CONF_FILE&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  getPSCount&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;pgrep -f &lt;span class=&quot;nv&quot;&gt;$PS&lt;/span&gt; | wc -l&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  isRunning&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;pidof_daemon &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;PID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PID&lt;/span&gt; -gt 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              return &lt;/span&gt;1
+          &lt;span class=&quot;k&quot;&gt;else
+              return &lt;/span&gt;0
+          &lt;span class=&quot;k&quot;&gt;fi
+      else
+          &lt;/span&gt;pidof_daemon
+          &lt;span class=&quot;nv&quot;&gt;PID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PID&lt;/span&gt; -gt 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              return &lt;/span&gt;1
+          &lt;span class=&quot;k&quot;&gt;else
+              return &lt;/span&gt;0
+          &lt;span class=&quot;k&quot;&gt;fi
+      fi&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;#courtesy of php-fpm&lt;/span&gt;
+  wait_for_pid &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nv&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+
+      &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$try&lt;/span&gt; -lt 35 ; &lt;span class=&quot;k&quot;&gt;do
+          case&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
+              &lt;span class=&quot;s1&quot;&gt;&#39;created&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+              &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -f &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$2&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+                  &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;
+                  &lt;span class=&quot;nb&quot;&gt;break
+              &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+
+              &lt;span class=&quot;s1&quot;&gt;&#39;removed&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+              &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; ! -f &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$2&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+                  &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;
+                  &lt;span class=&quot;nb&quot;&gt;break
+              &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;esac&lt;/span&gt;
+
+          &lt;span class=&quot;nv&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;expr &lt;span class=&quot;nv&quot;&gt;$try&lt;/span&gt; + 1&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+          sleep 1
+      &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  status&lt;span class=&quot;o&quot;&gt;(){&lt;/span&gt;
+      isRunning
+      &lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; -eq &lt;span class=&quot;nv&quot;&gt;$TRUE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;log_warning_msg &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; found running with processes:  &lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;pidof &lt;span class=&quot;nv&quot;&gt;$PS&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+      &lt;span class=&quot;k&quot;&gt;else
+          &lt;/span&gt;log_warning_msg &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; is NOT running.&quot;&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3
+      &lt;span class=&quot;k&quot;&gt;fi
+
+      return&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  removePIDFile&lt;span class=&quot;o&quot;&gt;(){&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -f &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              &lt;/span&gt;rm -f &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;fi
+      else&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;#Do default removal&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -f &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              &lt;/span&gt;rm -f &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;fi
+      fi&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  start&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;Starting &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+      isRunning
+      &lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; -eq &lt;span class=&quot;nv&quot;&gt;$TRUE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+      &lt;span class=&quot;k&quot;&gt;else
+          &lt;/span&gt;start-stop-daemon --start --quiet --chuid &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;$RUNAS&lt;/span&gt; --pidfile &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt; --exec &lt;span class=&quot;nv&quot;&gt;$DAEMON&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+          -- -c &lt;span class=&quot;nv&quot;&gt;$NGINX_CONF_FILE&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+          setFilePerms
+
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; -eq 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+              &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+          &lt;span class=&quot;k&quot;&gt;else
+              &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+              &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7
+          &lt;span class=&quot;k&quot;&gt;fi
+      fi
+
+      return&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  stop&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;Stopping &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+      isRunning
+      &lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; -eq &lt;span class=&quot;nv&quot;&gt;$TRUE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;start-stop-daemon --stop --quiet --pidfile &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;
+
+          wait_for_pid &lt;span class=&quot;s1&quot;&gt;&#39;removed&#39;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;
+
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -n &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$try&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+              &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0 &lt;span class=&quot;c&quot;&gt;# lsb states 1, but under status it is 2 (which is more prescriptive). Deferring to standard.&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;else
+              &lt;/span&gt;removePIDFile
+              log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+              &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+          &lt;span class=&quot;k&quot;&gt;fi
+      else
+          &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7
+      &lt;span class=&quot;k&quot;&gt;fi
+
+      return&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  reload&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      configtest &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+      log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;Reloading (via HUP) &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+      isRunning
+
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt; -eq &lt;span class=&quot;nv&quot;&gt;$TRUE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -HUP &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+          log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+      &lt;span class=&quot;k&quot;&gt;else
+          &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7
+      &lt;span class=&quot;k&quot;&gt;fi
+
+      return&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  quietupgrade&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;Peforming Quiet Upgrade &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+      isRunning
+      &lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; -eq &lt;span class=&quot;nv&quot;&gt;$TRUE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+          &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -USR2 &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+          &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -WINCH &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+
+          isRunning
+          &lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;isAlive&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; -eq &lt;span class=&quot;nv&quot;&gt;$TRUE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -QUIT &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+              wait_for_pid &lt;span class=&quot;s1&quot;&gt;&#39;removed&#39;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin
+              removePIDFile &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin
+
+              log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+              &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+          &lt;span class=&quot;k&quot;&gt;else
+              &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+
+              log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;ERROR! Reverting back to original &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+              &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -HUP &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+              &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -TERM &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+              &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; -QUIT &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+
+              wait_for_pid &lt;span class=&quot;s1&quot;&gt;&#39;removed&#39;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin
+              removePIDFile &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;.oldbin
+
+              log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+              &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+          &lt;span class=&quot;k&quot;&gt;fi
+      else
+          &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_ERROR&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7
+      &lt;span class=&quot;k&quot;&gt;fi
+
+      return&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  terminate&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;Force terminating (via KILL) &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+      &lt;span class=&quot;nv&quot;&gt;PIDS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;pidof &lt;span class=&quot;nv&quot;&gt;$PS&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+
+      &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -e &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;PIDS2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;i &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PIDS&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;do
+          if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$i&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PIDS2&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$i&lt;/span&gt;
+              wait_for_pid &lt;span class=&quot;s1&quot;&gt;&#39;removed&#39;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;
+              removePIDFile
+          &lt;span class=&quot;k&quot;&gt;fi
+      done
+
+      &lt;/span&gt;log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+      &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  destroy&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      log_daemon_msg &lt;span class=&quot;s2&quot;&gt;&quot;Force terminating and may include self (via KILLALL) &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+      killall &lt;span class=&quot;nv&quot;&gt;$PS&lt;/span&gt; -q &amp;gt;&amp;gt; /dev/null 2&amp;gt;&amp;amp;1
+      log_end_msg &lt;span class=&quot;nv&quot;&gt;$SCRIPT_OK&lt;/span&gt;
+      &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  pidof_daemon&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nv&quot;&gt;PIDS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;pidof &lt;span class=&quot;nv&quot;&gt;$PS&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+
+      &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -e &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;PIDS2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;cat &lt;span class=&quot;nv&quot;&gt;$PIDSPATH&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$PIDFILE&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;i &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PIDS&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;do
+          if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$i&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PIDS2&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+              return &lt;/span&gt;1
+          &lt;span class=&quot;k&quot;&gt;fi
+      done
+
+      return &lt;/span&gt;0
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nv&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in
+      &lt;/span&gt;start&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          start
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      stop&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          stop
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      restart|force-reload&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          stop
+          &lt;span class=&quot;c&quot;&gt;# if [ $rc -ne 0 ]; then&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;#     script_exit&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;# fi&lt;/span&gt;
+          sleep 1
+          start
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      reload&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      status&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          status
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      configtest&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      quietupgrade&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      terminate&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      destroy&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;FULLPATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/init.d/&lt;span class=&quot;nv&quot;&gt;$PS&lt;/span&gt;
+          &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Usage: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$FULLPATH&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; {start|stop|restart|force-reload|reload|status|configtest|quietupgrade|terminate|destroy}&quot;&lt;/span&gt;
+          &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;       The &#39;destroy&#39; command should only be used as a last resort.&quot;&lt;/span&gt;
+          &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;3
+          &lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;esac&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$rc&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        <pubDate>Thu, 11 Aug 2016 18:50:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/server/2016/08/11/configure_nginx_with_passenger_and_rbenv.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/server/2016/08/11/configure_nginx_with_passenger_and_rbenv.html</guid>
+        
+        
+        <category>server</category>
+        
+      </item>
+    
+      <item>
+        <title>sidekiq &amp; restclient</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyWorker&lt;/span&gt;
+  &lt;span class=&quot;kp&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Sidekiq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Worker&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;sidekiq_options&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:retry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;sidekiq_retries_exhausted&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform_msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;Sidekiq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;warn&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Failed &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform_msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;class&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; with &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform_msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;args&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform_msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;error_message&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;MyWorker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;deal_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;bad&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;perform_msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;args&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;last&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{})&lt;/span&gt;    
+    &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;manually error&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;showerror&#39;&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;RestClient&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:method&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:payload&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:headers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Content-Type&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;application/json&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:max_redirects&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;301&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;302&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;307&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;include?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;follow_redirection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;            
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;deal_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;good&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deal_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;#do_good if flag == &#39;good&#39;&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;#do_bad  if flag == &#39;bad&#39;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Wed, 13 Jul 2016 22:50:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/outer/2016/07/13/sidekiq_restclient.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/outer/2016/07/13/sidekiq_restclient.html</guid>
+        
+        
+        <category>outer</category>
+        
+      </item>
+    
+      <item>
+        <title>时间label</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;//js&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rawSeconds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rawSeconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rawSeconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;minutes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;parseInt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rawSeconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;seconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;parseInt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rawSeconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hours&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;parseInt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;minutes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;minutes&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;parseInt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;minutes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;hours&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hours&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;小时&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;minutes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;minutes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;分&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;seconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;seconds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;秒&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;secondsToLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;divmod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;hh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;divmod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hh&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;小时&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hh&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mm&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;分&quot;&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ss&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;秒&quot;&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Wed, 13 Jul 2016 22:28:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/front/2016/07/13/time_label.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/front/2016/07/13/time_label.html</guid>
+        
+        
+        <category>front</category>
+        
+      </item>
+    
+      <item>
+        <title>希尔排序</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;shell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;dup&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;length&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+                &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+            &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;&#39;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sat, 16 Apr 2016 01:08:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/args/2016/04/16/shell_sort.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/args/2016/04/16/shell_sort.html</guid>
+        
+        
+        <category>args</category>
+        
+      </item>
+    
+      <item>
+        <title>选择排序</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;selection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;dup&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;length&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;min&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;
+
+        &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;min&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;arr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;,&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sat, 16 Apr 2016 01:08:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/rails/2016/04/16/selection_sort.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/rails/2016/04/16/selection_sort.html</guid>
+        
+        
+        <category>rails</category>
+        
+      </item>
+    
+      <item>
+        <title>intersect &amp; union &amp; diff  in ruby</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# intersection&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;            &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; [1, 2]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# union&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;            &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; [1, 2, 4]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# difference&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;            &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; [4]&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sat, 16 Apr 2016 01:08:39 +0800</pubDate>
+        <link>http://mikedeng.github.io/rails/2016/04/16/intersect_union_diff_in_ruby.html</link>
+        <guid isPermaLink="true">http://mikedeng.github.io/rails/2016/04/16/intersect_union_diff_in_ruby.html</guid>
+        
+        
+        <category>rails</category>
+        
+      </item>
+    
+  </channel>
+</rss>

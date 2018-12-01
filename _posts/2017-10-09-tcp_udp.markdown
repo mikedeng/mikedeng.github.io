@@ -1,0 +1,106 @@
+---
+layout: post
+title:  "tcp & udp"
+date:   2017-10-09 22:30:39
+
+categories: frontend
+---
+
+## tcp server
+```js
+const net = require('net')
+const server = net.createServer(socket => {
+    socket.on('data', data => {
+        console.log(data.toString())
+        socket.write('你好')
+    })
+
+    socket.on('end', () => console.log('connection ended'))
+    socket.write('welcome to tcp server')
+})
+
+server.listen(8124, () => console.log('listing to port 8124'))
+// client test: telnet 127.0.0.1 8124
+```
+
+## tcp client
+```js
+var net = require('net')
+var client = net.connect({ port: 8124 }, () => {
+    console.log('client connected')
+    client.write('world!\r\n')
+})
+
+client.on('data', data => {
+    console.log(data.toString())
+    client.end()
+})
+```
+
+## echo server
+```js
+const net = require('net')
+const server = net.createServer(socket => {
+  socket.write('echo server \r\n')
+  socket.pipe(socket)
+})
+
+server.listen(1337, '127.0.0.1')
+```
+
+## udp server
+```js
+const dgram = require('dgram')
+const server = dgram.createSocket('udp4')
+server.on('message', (msg, rinfo) => {
+  console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port)
+})
+
+server.on('listening', () => {
+  var address = server.address()
+  console.log('server listening' + address.address + ":" + address.port)
+})
+
+server.bind(41234)
+```
+
+## upd client
+```js
+const dgram = require('dgram')
+const message = new Buffer('node.js in depth')
+const client = dgram.createSocket('udp4')
+client.send(message, 0, message.length, 41234, 'localhost', (err, bytes) => {
+  client.close()
+})
+```
+
+## http server
+```js
+const http = require('http')
+const server = http.createServer((req, res) => {
+  res.writeHead(200, {'Content-Type': 'text/plain'})
+  res.end('Hello World\n')
+})
+server.listen(1337)
+console.log('listening to port 1337')
+```
+
+## http client
+```js
+const http = require('http')
+const options = {
+  hostname: '127.0.0.1',
+  port: 1337,
+  path: '/',
+  method: 'GET'
+}
+
+var req = http.request(options, res => {
+  console.log('Status: ' + res.statusCode)
+  console.log('Headers: ' + JSON.stringify(res.headers))
+  res.setEncoding('utf8')
+  res.on('data', chunk => console.log(chunk))
+})
+
+req.end()
+```

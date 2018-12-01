@@ -1,0 +1,100 @@
+---
+layout: post
+title:  "js尾递归实例"
+date:   2017-08-29 22:30:39
+
+categories: frontend
+---
+
+
+## 问题： 如何实现阶乘 递归 vs 尾递归
+
++ 递归解决办法：复杂度 O(n)
+
+	```javascript
+		function factorial(n){
+			if(n === 1) return 1;
+			return n * factorial(n - 1);
+		}
+
+		factorial(5);
+	```
+
++ 尾递归解决办法： 复杂度 O(1)
+
+	```javascript
+
+		function factorial2(n, total = 1){
+			if(n === 1) return total;
+			return factorial2(n - 1,  n * total);
+		}
+
+		factorial2(100);
+	
+	```
+
+## 问题： 如何实现斐波那契函数 递归 vs 尾递归
+
++ 递归实现
+	```javascript
+		function fib(n){
+			if(n <= 1){ return 1; }
+			return fib(n - 1) + fib(n - 2);
+		}
+
+		fib(40);
+	```
+
++ 尾递归实现
+	```javascript
+		function fib2(n, s1 = 1, s2 = 1){
+			if(n <= 1){ return s2; }
+			return fib2(n - 1, s2, s1 + s2);
+		}
+
+		fib2(40);
+	```
+
+## 	但上面实现有缺陷，是因为递归时子函数在 `funcs.caller` 和 `funcs.arguments` 一直引用了父函数。真实尾递归如下实现：
+
++ 尾递归函数
+	```javascript
+
+		function tco(f) {
+			var value, active = false, accumulated = [];
+
+			return function accumulator(){
+				console.log(Array.prototype.slice.call(arguments));
+				accumulated.push(arguments);
+				if(!active){
+					active = true;
+					while(accumulated.length > 0){
+						value = f.apply(this, accumulated.shift());
+					}
+
+					active = false;
+					return value;
+				}
+			};
+		}
+
+		let factorial = tco(function(n, total = 1){
+			if(n === 1){
+				return total;
+			}else{
+				return factorial(n - 1, n * total);
+			}
+		});
+
+		factorial(5);
+
+
+
+		let fib = tco(function(n, s1 = 1, s2 = 1){
+			if(n <= 1){
+				return s2;
+			} else {
+				return fib(n - 1, s2, s1 + s2);
+			}
+		})
+	```

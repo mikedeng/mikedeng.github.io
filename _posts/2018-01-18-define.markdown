@@ -1,0 +1,45 @@
+---
+layout: post
+title:  "use DefinePlugin to define a variable"
+date:   2018-01-18 22:30:39
+
+categories: frontend
+---
+
+
+##  启动
+```json
+//  package.json
+{
+    "scripts": {
+        "dev": "webpack-dev-server --inline --hot --env.dev",
+        "build": "rm -rf dist && webpack -p --progress --hide-modules --env.prod"
+    }
+}
+```
+
+
+## 环境配置
+```js
+
+// prod.env.js
+module.exports = {
+  NODE_ENV: '"production"',
+  API_URL: JSON.stringify('http://wxn.ykyd0417.com/school/api')
+}
+
+// webpack.config.js
+plugins: [
+    new webpack.DefinePlugin({
+    'process.env': (options.dev ? require('./config/dev.env') : require('./config/prod.env'))
+    })
+
+    //....
+]
+```
+
+## 使用
+```js
+// config.js
+baseURL: process.env.API_URL
+```

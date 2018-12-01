@@ -1,0 +1,33 @@
+---
+layout: post
+title:  "读书笔记 [js 框架设计] chap 1"
+date:   2018-03-07 22:24:39
+
+categories: frontend
+---
+
+## 3种模块的规范的应用前提
++ AMD 通过 RequireJS 能直接运行于浏览器.
++ CommonJS 需要 browserfy 等 nodejs 打包才能运行于浏览器.
++ ES6 module 浏览器目前不支持，需要webpack、 rollup 等 nodejs 打包.
+
+## CommonJS 规范的制作框架时的优势
++ 打包工具非常成熟。
++ 用这种方式写成的框架与 Node.js 编写的测试框架无缝配合(Node.js 采用 CommonJS 规范)
++ 制作入口文件时，只要导出代表命名空间对象就行了。
+
+## 框架的种子模块特性要求
++ 高扩展性： 方便将其它模块的方法和属性加入进来。
++ 高可用：   常用的，其它模板不用重复定义它们
++ 稳定性：   不轻易在后来的版本中删除
+
+## 框架的种子模块功能点
++ 对象扩展
++ 数据化
++ 类型判定
++ 无冲突处理
++ domReady
+
+
+## links
++ [seed reference](https://github.com/rubyLouvre/avalon/tree/master/src/seed)
