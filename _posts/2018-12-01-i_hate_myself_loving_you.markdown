@@ -6,6 +6,7 @@ date:   2018-12-01 22:00:00
 categories: cantonese
 --- 
 
+```
 zok6 je6 cang4 lap6 sai6 lei4 bit6 nei5  nei5 jim3 liu5 ngo5 jau6 waa6 ngo5 fat6 mei6 
 昨夜曾立誓离别你 你厌了我又话我乏味
 
@@ -110,3 +111,4 @@ han6 nei5 fu6 ji6
 
 jik6 ngoi3 jik6 han6  si6 ngo5 ci1 sam1
 亦爱亦恨 是我痴心
+```
