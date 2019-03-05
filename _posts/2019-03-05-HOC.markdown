@@ -1,0 +1,112 @@
+---
+layout: post
+title:  "HOC (high order component)"
+date:   2019-03-05 11:40:00
+
+categories: frontend
+--- 
+
+[origin](https://medium.com/@franleplant/react-higher-order-components-in-depth-cf9032ee6c3e)
+
+## High level HOC enables you: 
++ Code reuse, logic and bootstrap abstraction
++ Render Highjacking
++ State abstraction and manipulation
++ Props manipulation
+
+ But it depends, because the implementation allows and restricts what you can actually do with an HOC
+
+
+##  Props Proxy
+ ```js
+ function ppHOC(WrappedComponent) {
+     return class extends React.Component {
+         render() {
+            return <WrappedComponent {...this.props} />
+         }
+     }
+ }
+ ```
+
+what can be done with props proxy
+
++ Manipulating props
++ Accessing the instance via Refs
++ Abstracting State
++ Wrapping the WrappedComponent with other elements
+
+
++ Accessing the instance via Refs
+```js
+function refsHOC(WrappedComponent) {
+  return class RefsHOC extends React.Component {
+    proc(wrappedComponentInstance) {
+      wrappedComponentInstance.method()
+    }
+    
+    render() {
+      const props = Object.assign({}, this.props, {ref: this.proc.bind(this)})
+      return <WrappedComponent {...props}/>
+    }
+  }
+}
+```
+
+```js
+function ppHOC(WrappedComponent) {
+    return class PP extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                name: ''
+            }
+
+            this.onNameChange = this.onNameChange.bind(this);
+        }
+
+        onNameChange(event) {
+            this.setState({
+                name: event.target.value
+            })
+        }
+
+        render() {
+            const newProps = {
+                name: {
+                    value: this.state.name,
+                    onChange: this.onNameChange
+                }
+            }
+
+            return <WrappedComponent {...this.props} {...newProps} />
+        }
+    }
+}
+
+@ppHOC
+class Example extends React.Component {
+    render() {
+        return <input name="name" {...this.props.name} />
+    }
+}
+
+```
+
+## Inheritance Inversion
+```js
+function iiHOC(WrappedComponent) {
+  return class Enhancer extends WrappedComponent {
+    render() {
+      return super.render()
+    }
+  }
+}
+```
+
+Inheritance Inversion allows the HOC to have access to the WrappedComponent instance via `this`, which means `it has access to the state, props, component lifecycle hooks and the render method`
+
+**`Inheritance Inversion High Order Components don’t have a guaranty of having the full children tree resolved.`**
+
+
++ [React Elements vs Components  post by Dan Abramov ](https://reactjs.org/blog/2015/12/18/react-components-elements-and-instances.html)
++ [reconciliation process.](https://reactjs.org/docs/reconciliation.html)
