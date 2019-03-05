@@ -84,8 +84,6 @@ what can be done with props proxy
       }
   }
 
-  // how to use the state abstraction
-
   @ppHOC
   class Example extends React.Component {
       render() {
