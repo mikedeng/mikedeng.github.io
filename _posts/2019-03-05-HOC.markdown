@@ -19,13 +19,13 @@ categories: frontend
 
 ##  Props Proxy
  ```js
- function ppHOC(WrappedComponent) {
-     return class extends React.Component {
-         render() {
-            return <WrappedComponent {...this.props} />
-         }
-     }
- }
+   function ppHOC(WrappedComponent) {
+       return class extends React.Component {
+           render() {
+              return <WrappedComponent {...this.props} />
+           }
+       }
+   }
  ```
 
 what can be done with props proxy
@@ -38,71 +38,72 @@ what can be done with props proxy
 
 + Accessing the instance via Refs
 ```js
-function refsHOC(WrappedComponent) {
-  return class RefsHOC extends React.Component {
-    proc(wrappedComponentInstance) {
-      wrappedComponentInstance.method()
-    }
-    
-    render() {
-      const props = Object.assign({}, this.props, {ref: this.proc.bind(this)})
-      return <WrappedComponent {...props}/>
+  function refsHOC(WrappedComponent) {
+    return class RefsHOC extends React.Component {
+      proc(wrappedComponentInstance) {
+        wrappedComponentInstance.method()
+      }
+      
+      render() {
+        const props = Object.assign({}, this.props, {ref: this.proc.bind(this)})
+        return <WrappedComponent {...props}/>
+      }
     }
   }
-}
 ```
 
 + Abstracting State
 ```js
-function ppHOC(WrappedComponent) {
-    return class PP extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                name: ''
-            }
+  function ppHOC(WrappedComponent) {
+      return class PP extends React.Component {
+          constructor(props) {
+              super(props);
+              this.state = {
+                  name: ''
+              }
 
-            this.onNameChange = this.onNameChange.bind(this);
-        }
+              this.onNameChange = this.onNameChange.bind(this);
+          }
 
-        onNameChange(event) {
-            this.setState({
-                name: event.target.value
-            })
-        }
+          onNameChange(event) {
+              this.setState({
+                  name: event.target.value
+              })
+          }
 
-        render() {
-            const newProps = {
-                name: {
-                    value: this.state.name,
-                    onChange: this.onNameChange
-                }
-            }
+          render() {
+              const newProps = {
+                  name: {
+                      value: this.state.name,
+                      onChange: this.onNameChange
+                  }
+              }
 
-            return <WrappedComponent {...this.props} {...newProps} />
-        }
-    }
-}
+              return <WrappedComponent {...this.props} {...newProps} />
+          }
+      }
+  }
 
-// how to use the state abstraction
-@ppHOC
-class Example extends React.Component {
-    render() {
-        return <input name="name" {...this.props.name} />
-    }
-}
+  // how to use the state abstraction
+
+  @ppHOC
+  class Example extends React.Component {
+      render() {
+          return <input name="name" {...this.props.name} />
+      }
+  }
 
 ```
 
 ## Inheritance Inversion
 ```js
-function iiHOC(WrappedComponent) {
-  return class Enhancer extends WrappedComponent {
-    render() {
-      return super.render()
+  function iiHOC(WrappedComponent) {
+    return class Enhancer extends WrappedComponent {
+      render() {
+        return super.render()
+      }
     }
   }
-}
 ```
 
 Inheritance Inversion allows the HOC to have access to the WrappedComponent instance via `this`, which means `it has access to the state, props, component lifecycle hooks and the render method`
