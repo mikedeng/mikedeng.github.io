@@ -36,3 +36,7 @@ expriences in git
   >A. Use `git reset start-commit-name`, and commit the changes by force.
 
   >B. Use `git rebase -i  start-commit-name`, and then apply the fixup option for all of the commits to amend.
+
+
+# 2019-03-05
+engaging with coding.
