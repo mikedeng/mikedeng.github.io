@@ -52,6 +52,7 @@ function refsHOC(WrappedComponent) {
 }
 ```
 
++ Abstracting State
 ```js
 function ppHOC(WrappedComponent) {
     return class PP extends React.Component {
@@ -83,6 +84,7 @@ function ppHOC(WrappedComponent) {
     }
 }
 
+// how to use the state abstraction
 @ppHOC
 class Example extends React.Component {
     render() {
@@ -110,3 +112,4 @@ Inheritance Inversion allows the HOC to have access to the WrappedComponent inst
 
 + [React Elements vs Components  post by Dan Abramov ](https://reactjs.org/blog/2015/12/18/react-components-elements-and-instances.html)
 + [reconciliation process.](https://reactjs.org/docs/reconciliation.html)
++ [Presentational and Container Components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)
